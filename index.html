@@ -30,7 +30,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Contenedor del carrusel fijado para alineación exacta con iOS */
+    /* Contenedor del carrusel fijado para alineación exacta */
     #carrusel {
       display: flex;
       width: 300vw;
@@ -91,10 +91,6 @@
     .num-9 { top: 36%; left: 52%; }
 
     .num-0 { top: 50%; left: 29%; }
-
-    #link-atajo {
-      display: none;
-    }
   </style>
 </head>
 <body>
@@ -161,8 +157,6 @@
 
   </div>
 
-  <a id="link-atajo" href=""></a>
-
   <script>
     // --- LÓGICA DE CARRUSEL (SWIPE FLUIDO) ---
     const totalPaginas = 3;
@@ -175,17 +169,16 @@
 
     document.addEventListener('touchstart', function(e) {
       touchStartX = e.changedTouches[0].screenX;
-    }, false);
+    }, {passive: true});
 
     document.addEventListener('touchend', function(e) {
       touchEndX = e.changedTouches[0].screenX;
       handleGesture();
-    }, false);
+    }, {passive: true});
 
     function handleGesture() {
       const umbralDesplazamiento = 40;
 
-      // Deslizar a la izquierda (Siguiente página)
       if (touchStartX - touchEndX > umbralDesplazamiento) {
         if (paginaActual < totalPaginas - 1) {
           paginaActual++;
@@ -193,7 +186,6 @@
         }
       }
 
-      // Deslizar a la derecha (Página anterior)
       if (touchEndX - touchStartX > umbralDesplazamiento) {
         if (paginaActual > 0) {
           paginaActual--;
@@ -207,7 +199,7 @@
       carrusel.style.transform = "translateX(" + desplazamiento + "vw)";
     }
 
-    // --- LÓGICA DE FUERZA (DÍGITOS + ATAJO) ---
+    // --- LÓGICA DE FUERZA (DIRECTA SIN DOBLE TAP) ---
     let numeroAcumulado = "";
 
     function registrarDigito(digito) {
@@ -218,10 +210,10 @@
         numeroAcumulado = "";
 
         let urlScheme = "shortcuts://run-shortcut?name=DFB_Notas&input=text&text=" + encodeURIComponent(numeroFinal);
-
-        let link = document.getElementById("link-atajo");
-        link.href = urlScheme;
-        link.click();
+        
+        setTimeout(() => {
+          window.location.href = urlScheme;
+        }, 50);
       }
     }
   </script>
