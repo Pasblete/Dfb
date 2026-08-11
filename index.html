@@ -23,31 +23,30 @@
       margin: 0;
       padding: 0;
       width: 100%;
+      height: 100%;
       height: 100vh;
-      height: -webkit-fill-available;
       background-color: #000;
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Contenedor deslizante horizontal (Carrusel) */
+    /* Contenedor del carrusel fijado para alineación exacta con el Notch/Dynamic Island */
     #carrusel {
       display: flex;
-      width: 300vw; /* 3 páginas = 300% del ancho de la pantalla */
+      width: 300vw; /* 3 páginas horizontales */
       height: 100vh;
-      height: -webkit-fill-available;
-      position: absolute;
+      position: fixed;
       top: 0;
+      bottom: 0;
       left: 0;
-      transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1); /* Movimiento suave estilo iOS */
+      transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
       will-change: transform;
     }
 
-    /* Cada página individual */
+    /* Cada página individual configurada para llenar la pantalla completa */
     .pagina {
       width: 100vw;
       height: 100vh;
-      height: -webkit-fill-available;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -55,12 +54,12 @@
       flex-shrink: 0;
     }
 
-    /* Fondos para cada página */
+    /* Fondos de cada página */
     #pag-1 { background-image: url('pagina1.jpg'); }
     #pag-2 { background-image: url('pagina2.jpg'); }
     #pag-3 { background-image: url('pagina3.jpg'); }
 
-    /* Rejilla de botones invisibles sobre los iconos (Solo activa en la Pagina 1) */
+    /* Rejilla de botones invisibles sobre la primera página */
     #grid-teclado {
       position: absolute;
       top: 0;
@@ -100,10 +99,10 @@
 </head>
 <body>
 
-  <!-- Contenedor del Carrusel con las 3 páginas montadas de fondo -->
+  <!-- Carrusel con las 3 páginas montadas -->
   <div id="carrusel">
     
-    <!-- PÁGINA 1: Contiene los botones invisibles para la fuerza -->
+    <!-- PÁGINA 1: Con zona táctil invisible -->
     <div class="pagina" id="pag-1">
       <div id="grid-teclado">
         <div class="tecla num-1" onclick="registrarDigito('1')"></div>
@@ -133,7 +132,7 @@
   <a id="link-atajo" href=""></a>
 
   <script>
-    // --- LÓGICA DE CARRUSEL Y DESLIZAMIENTO FLUIDO (SWIPE) ---
+    // --- LÓGICA DE CARRUSEL (SWIPE FLUIDO) ---
     const totalPaginas = 3;
     let paginaActual = 0;
 
@@ -172,7 +171,6 @@
     }
 
     function actualizarPosicion() {
-      // Mueve el contenedor horizontalmente sin recargar ni parpadear
       const desplazamiento = -paginaActual * 100;
       carrusel.style.transform = "translateX(" + desplazamiento + "vw)";
     }
