@@ -1,77 +1,133 @@
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Inicio</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: -apple-system, sans-serif; }
-    .slider { display: flex; width: 300vw; height: 100vh; transition: transform 0.3s ease-out; }
-    .page { width: 100vw; height: 100vh; background-size: cover; background-position: center; position: relative; }
-    #page1 { background-image: url('pagina1.jpg'); }
-    #page2 { background-image: url('pagina2.jpg'); }
-    #page3 { background-image: url('pagina3.jpg'); }
+  <!-- Previene zoom accidental en el iPhone -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <!-- CONFIGURACIÓN PANTALLA COMPLETA EN IOS (WEB APP NATIVA) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Inicio">
 
-    /* Ajusta estos valores % para que el recuadro caiga sobre tu icono de Notas en la Página 3 */
-    .notes-icon-hotspot {
+  <title>Pantalla de Inicio</title>
+
+  <style>
+    /* Reset de márgenes y vista completa */
+    * {
+      box-sizing: border-box;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Contenedor principal del fondo del iPhone */
+    #pantalla {
+      width: 100vw;
+      height: 100vh;
+      background-image: url('pagina1.jpg'); /* Asegúrate de que coincida exacto con tu archivo */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+
+    /* Rejilla invisible colocada sobre la cuadrícula de iconos de iOS */
+    #grid-teclado {
       position: absolute;
-      top: 18%; 
-      left: 8%;
-      width: 75px;
-      height: 75px;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+    }
+
+    /* Estilo de los 10 botones invisibles sobre los iconos */
+    .tecla {
+      position: absolute;
+      width: 21%;   /* Ancho que cubre un icono de iOS */
+      height: 11%;  /* Alto que cubre un icono de iOS */
+      opacity: 0;   /* Invisible */
+      /* border: 1px solid red; */ /* DESCOMENTAR SOLO PARA PRUEBAS Y VER LOS BOTONES */
+    }
+
+    /* Coordenadas ajustadas a la cuadrícula estándar de iconos (4x6) */
+    /* Fila 1: Iconos 1, 2, 3 */
+    .num-1 { top: 8%;  left: 6%; }
+    .num-2 { top: 8%;  left: 29%; }
+    .num-3 { top: 8%;  left: 52%; }
+
+    /* Fila 2: Iconos 4, 5, 6 */
+    .num-4 { top: 22%; left: 6%; }
+    .num-5 { top: 22%; left: 29%; }
+    .num-6 { top: 22%; left: 52%; }
+
+    /* Fila 3: Iconos 7, 8, 9 */
+    .num-7 { top: 36%; left: 6%; }
+    .num-8 { top: 36%; left: 29%; }
+    .num-9 { top: 36%; left: 52%; }
+
+    /* Fila 4: Icono 0 (centro) */
+    .num-0 { top: 50%; left: 29%; }
+
+    /* Enlace invisible final para la redirección */
+    #link-atajo {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <div class="slider" id="slider">
-    <div class="page" id="page1"></div>
-    <div class="page" id="page2"></div>
-    <div class="page" id="page3">
-      <div class="notes-icon-hotspot" onclick="ejecutarMagia()"></div>
+  <div id="pantalla">
+    <!-- Rejilla de 10 botones táctiles invisibles sobre la pantalla -->
+    <div id="grid-teclado">
+      <div class="tecla num-1" onclick="registrarDigito('1')"></div>
+      <div class="tecla num-2" onclick="registrarDigito('2')"></div>
+      <div class="tecla num-3" onclick="registrarDigito('3')"></div>
+
+      <div class="tecla num-4" onclick="registrarDigito('4')"></div>
+      <div class="tecla num-5" onclick="registrarDigito('5')"></div>
+      <div class="tecla num-6" onclick="registrarDigito('6')"></div>
+
+      <div class="tecla num-7" onclick="registrarDigito('7')"></div>
+      <div class="tecla num-8" onclick="registrarDigito('8')"></div>
+      <div class="tecla num-9" onclick="registrarDigito('9')"></div>
+
+      <div class="tecla num-0" onclick="registrarDigito('0')"></div>
     </div>
   </div>
 
+  <!-- Enlace fantasma para lanzar el atajo directamente -->
+  <a id="link-atajo" href=""></a>
+
   <script>
-    let currentPage = 1;
-    let startX = 0, startY = 0;
-    let d1 = null, d2 = null;
-    const slider = document.getElementById('slider');
+    let numeroAcumulado = "";
 
-    function getYDigit(y) {
-      const screenHeight = window.innerHeight;
-      const zone = Math.floor((y / screenHeight) * 10);
-      const mapping = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-      return mapping[Math.min(zone, 9)];
-    }
+    function registrarDigito(digito) {
+      numeroAcumulado += digito;
 
-    document.addEventListener('touchstart', (e) => {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-    });
+      // Al tocar 2 iconos se procesa la entrada del número (00 al 99)
+      if (numeroAcumulado.length === 2) {
+        let numeroFinal = numeroAcumulado;
+        numeroAcumulado = ""; // Limpiar acumulador
 
-    document.addEventListener('touchend', (e) => {
-      let diffX = startX - e.changedTouches[0].clientX;
-      if (diffX > 50) {
-        if (currentPage === 1) {
-          d1 = getYDigit(startY);
-          currentPage = 2;
-          slider.style.transform = 'translateX(-100vw)';
-        } else if (currentPage === 2) {
-          d2 = getYDigit(startY);
-          currentPage = 3;
-          slider.style.transform = 'translateX(-200vw)';
-        }
-      }
-    });
+        // Construir la URL Scheme hacia tu Atajo DFB_Notas
+        let urlScheme = "shortcuts://run-shortcut?name=DFB_Notas&input=text&text=" + encodeURIComponent(numeroFinal);
 
-    function ejecutarMagia() {
-      if (d1 !== null && d2 !== null) {
-        const numeroFinal = `${d1}${d2}`;
-        window.location.href = `shortcuts://run-shortcut?name=DFB_Notas&input=${numeroFinal}`;
+        // Disparar vía enlace invisible (reduce bloqueos de Safari)
+        let link = document.getElementById("link-atajo");
+        link.href = urlScheme;
+        link.click();
       }
     }
   </script>
