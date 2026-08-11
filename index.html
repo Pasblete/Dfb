@@ -2,18 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <!-- Previene zoom accidental en el iPhone -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- Viewport para pantalla completa en iOS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
-  <!-- CONFIGURACIÓN PANTALLA COMPLETA EN IOS (WEB APP NATIVA) -->
+  <!-- CONFIGURACIÓN WEB APP NATIVA EN IOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Inicio">
 
   <title>Pantalla de Inicio</title>
 
   <style>
-    /* Reset de márgenes y vista completa */
+    /* Bloqueo de selecciones y retoques visuales */
     * {
       box-sizing: border-box;
       -webkit-touch-callout: none;
@@ -25,24 +25,29 @@
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
+      height: 100vh;
+      height: -webkit-fill-available;
       background-color: #000;
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Contenedor principal del fondo del iPhone */
+    /* Contenedor principal con transición suave de fondo */
     #pantalla {
       width: 100vw;
       height: 100vh;
-      background-image: url('pagina1.jpg'); /* Asegúrate de que coincida exacto con tu archivo */
+      height: -webkit-fill-available;
+      background-image: url('pagina1.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      position: relative;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: background-image 0.2s ease-in-out;
     }
 
-    /* Rejilla invisible colocada sobre la cuadrícula de iconos de iOS */
+    /* Rejilla de botones invisibles sobre los iconos */
     #grid-teclado {
       position: absolute;
       top: 0;
@@ -52,35 +57,29 @@
       z-index: 10;
     }
 
-    /* Estilo de los 10 botones invisibles sobre los iconos */
+    /* Teclas invisibles */
     .tecla {
       position: absolute;
-      width: 21%;   /* Ancho que cubre un icono de iOS */
-      height: 11%;  /* Alto que cubre un icono de iOS */
-      opacity: 0;   /* Invisible */
-      /* border: 1px solid red; */ /* DESCOMENTAR SOLO PARA PRUEBAS Y VER LOS BOTONES */
+      width: 21%;   
+      height: 11%;  
+      opacity: 0;   
     }
 
-    /* Coordenadas ajustadas a la cuadrícula estándar de iconos (4x6) */
-    /* Fila 1: Iconos 1, 2, 3 */
+    /* Coordenadas de los 10 iconos (Cuadrícula 4x6 de iOS) */
     .num-1 { top: 8%;  left: 6%; }
     .num-2 { top: 8%;  left: 29%; }
     .num-3 { top: 8%;  left: 52%; }
 
-    /* Fila 2: Iconos 4, 5, 6 */
     .num-4 { top: 22%; left: 6%; }
     .num-5 { top: 22%; left: 29%; }
     .num-6 { top: 22%; left: 52%; }
 
-    /* Fila 3: Iconos 7, 8, 9 */
     .num-7 { top: 36%; left: 6%; }
     .num-8 { top: 36%; left: 29%; }
     .num-9 { top: 36%; left: 52%; }
 
-    /* Fila 4: Icono 0 (centro) */
     .num-0 { top: 50%; left: 29%; }
 
-    /* Enlace invisible final para la redirección */
     #link-atajo {
       display: none;
     }
@@ -89,7 +88,7 @@
 <body>
 
   <div id="pantalla">
-    <!-- Rejilla de 10 botones táctiles invisibles sobre la pantalla -->
+    <!-- Rejilla de 10 botones táctiles invisibles -->
     <div id="grid-teclado">
       <div class="tecla num-1" onclick="registrarDigito('1')"></div>
       <div class="tecla num-2" onclick="registrarDigito('2')"></div>
@@ -107,24 +106,63 @@
     </div>
   </div>
 
-  <!-- Enlace fantasma para lanzar el atajo directamente -->
   <a id="link-atajo" href=""></a>
 
   <script>
+    // --- NAVEGACIÓN ENTRE PÁGINAS (SWIPE) ---
+    const paginas = ['pagina1.jpg', 'pagina2.jpg', 'pagina3.jpg'];
+    let paginaActual = 0;
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    const pantallaDiv = document.getElementById('pantalla');
+
+    pantallaDiv.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+
+    pantallaDiv.addEventListener('touchend', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      handleGesture();
+    }, false);
+
+    function handleGesture() {
+      const umbralDesplazamiento = 40; // Distancia mínima en píxeles para detectar el gesto
+
+      // Deslizar a la izquierda (Avanzar página)
+      if (touchStartX - touchEndX > umbralDesplazamiento) {
+        if (paginaActual < paginas.length - 1) {
+          paginaActual++;
+          actualizarPagina();
+        }
+      }
+
+      // Deslizar a la derecha (Retroceder página)
+      if (touchEndX - touchStartX > umbralDesplazamiento) {
+        if (paginaActual > 0) {
+          paginaActual--;
+          actualizarPagina();
+        }
+      }
+    }
+
+    function actualizarPagina() {
+      pantallaDiv.style.backgroundImage = "url('" + paginas[paginaActual] + "')";
+    }
+
+    // --- LÓGICA DE FUERZA (DIGITOS + ATAJO) ---
     let numeroAcumulado = "";
 
     function registrarDigito(digito) {
       numeroAcumulado += digito;
 
-      // Al tocar 2 iconos se procesa la entrada del número (00 al 99)
       if (numeroAcumulado.length === 2) {
         let numeroFinal = numeroAcumulado;
-        numeroAcumulado = ""; // Limpiar acumulador
+        numeroAcumulado = "";
 
-        // Construir la URL Scheme hacia tu Atajo DFB_Notas
         let urlScheme = "shortcuts://run-shortcut?name=DFB_Notas&input=text&text=" + encodeURIComponent(numeroFinal);
 
-        // Disparar vía enlace invisible (reduce bloqueos de Safari)
         let link = document.getElementById("link-atajo");
         link.href = urlScheme;
         link.click();
