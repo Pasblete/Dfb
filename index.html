@@ -2,18 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport para pantalla completa en iOS -->
+  <!-- Viewport forzado para extender la pantalla detrás del Notch / Dynamic Island -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
-  <!-- CONFIGURACIÓN WEB APP NATIVA EN IOS -->
+  <!-- CONFIGURACIÓN PANTALLA COMPLETA EN IOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <!-- black-translucent es IMPRESCINDIBLE para que el HTML se meta DEBAJO de la barra de estado -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Inicio">
 
   <title>Pantalla de Inicio</title>
 
   <style>
-    /* Bloqueo de selecciones y retoques visuales */
     * {
       box-sizing: border-box;
       -webkit-touch-callout: none;
@@ -25,25 +25,29 @@
       margin: 0;
       padding: 0;
       width: 100%;
+      height: 100%;
       height: 100vh;
-      height: -webkit-fill-available;
       background-color: #000;
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Contenedor principal con transición suave de fondo */
+    /* Fondo configurado para ocupar el 100% absoluto incluyendo áreas seguras (Notch/Dynamic Island) */
     #pantalla {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       width: 100vw;
       height: 100vh;
-      height: -webkit-fill-available;
+      /* Extensión explícita para sobrepasar el Safe Area de iOS */
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
       background-image: url('pagina1.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      position: absolute;
-      top: 0;
-      left: 0;
       transition: background-image 0.2s ease-in-out;
     }
 
@@ -128,7 +132,7 @@
     }, false);
 
     function handleGesture() {
-      const umbralDesplazamiento = 40; // Distancia mínima en píxeles para detectar el gesto
+      const umbralDesplazamiento = 40;
 
       // Deslizar a la izquierda (Avanzar página)
       if (touchStartX - touchEndX > umbralDesplazamiento) {
@@ -151,7 +155,7 @@
       pantallaDiv.style.backgroundImage = "url('" + paginas[paginaActual] + "')";
     }
 
-    // --- LÓGICA DE FUERZA (DIGITOS + ATAJO) ---
+    // --- LÓGICA DE FUERZA (DÍGITOS + ATAJO) ---
     let numeroAcumulado = "";
 
     function registrarDigito(digito) {
@@ -171,3 +175,4 @@
   </script>
 </body>
 </html>
+
