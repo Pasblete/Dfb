@@ -30,10 +30,10 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Contenedor del carrusel fijado para alineación exacta con el Notch/Dynamic Island */
+    /* Contenedor del carrusel fijado para alineación exacta con iOS */
     #carrusel {
       display: flex;
-      width: 300vw; /* 3 páginas horizontales */
+      width: 300vw;
       height: 100vh;
       position: fixed;
       top: 0;
@@ -43,7 +43,7 @@
       will-change: transform;
     }
 
-    /* Cada página individual configurada para llenar la pantalla completa */
+    /* Cada página individual */
     .pagina {
       width: 100vw;
       height: 100vh;
@@ -59,8 +59,8 @@
     #pag-2 { background-image: url('pagina2.jpg'); }
     #pag-3 { background-image: url('pagina3.jpg'); }
 
-    /* Rejilla de botones invisibles sobre la primera página */
-    #grid-teclado {
+    /* Rejilla de botones invisibles sobre los iconos */
+    .grid-teclado {
       position: absolute;
       top: 0;
       left: 0;
@@ -102,9 +102,9 @@
   <!-- Carrusel con las 3 páginas montadas -->
   <div id="carrusel">
     
-    <!-- PÁGINA 1: Con zona táctil invisible -->
+    <!-- PÁGINA 1 -->
     <div class="pagina" id="pag-1">
-      <div id="grid-teclado">
+      <div class="grid-teclado">
         <div class="tecla num-1" onclick="registrarDigito('1')"></div>
         <div class="tecla num-2" onclick="registrarDigito('2')"></div>
         <div class="tecla num-3" onclick="registrarDigito('3')"></div>
@@ -122,10 +122,42 @@
     </div>
 
     <!-- PÁGINA 2 -->
-    <div class="pagina" id="pag-2"></div>
+    <div class="pagina" id="pag-2">
+      <div class="grid-teclado">
+        <div class="tecla num-1" onclick="registrarDigito('1')"></div>
+        <div class="tecla num-2" onclick="registrarDigito('2')"></div>
+        <div class="tecla num-3" onclick="registrarDigito('3')"></div>
+
+        <div class="tecla num-4" onclick="registrarDigito('4')"></div>
+        <div class="tecla num-5" onclick="registrarDigito('5')"></div>
+        <div class="tecla num-6" onclick="registrarDigito('6')"></div>
+
+        <div class="tecla num-7" onclick="registrarDigito('7')"></div>
+        <div class="tecla num-8" onclick="registrarDigito('8')"></div>
+        <div class="tecla num-9" onclick="registrarDigito('9')"></div>
+
+        <div class="tecla num-0" onclick="registrarDigito('0')"></div>
+      </div>
+    </div>
 
     <!-- PÁGINA 3 -->
-    <div class="pagina" id="pag-3"></div>
+    <div class="pagina" id="pag-3">
+      <div class="grid-teclado">
+        <div class="tecla num-1" onclick="registrarDigito('1')"></div>
+        <div class="tecla num-2" onclick="registrarDigito('2')"></div>
+        <div class="tecla num-3" onclick="registrarDigito('3')"></div>
+
+        <div class="tecla num-4" onclick="registrarDigito('4')"></div>
+        <div class="tecla num-5" onclick="registrarDigito('5')"></div>
+        <div class="tecla num-6" onclick="registrarDigito('6')"></div>
+
+        <div class="tecla num-7" onclick="registrarDigito('7')"></div>
+        <div class="tecla num-8" onclick="registrarDigito('8')"></div>
+        <div class="tecla num-9" onclick="registrarDigito('9')"></div>
+
+        <div class="tecla num-0" onclick="registrarDigito('0')"></div>
+      </div>
+    </div>
 
   </div>
 
